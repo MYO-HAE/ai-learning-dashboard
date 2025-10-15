@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Engineer Learning Journey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+        }
+        .week-card {
+            border-left-width: 4px;
+            transition: all 0.3s ease;
+        }
+        .week-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        .status-completed { border-color: #10B981; /* border-emerald-500 */ }
+        .status-in_progress { border-color: #3B82F6; /* border-blue-500 */ }
+        .status-not_started { border-color: #6B7280; /* border-gray-500 */ }
+
+        .daily-tasks {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .task-item input:checked + span {
+            text-decoration: line-through;
+            color: #6B7280; /* text-gray-500 */
+        }
+        
+        /* Custom scrollbar for better aesthetics in dark mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1F2937; /* bg-gray-800 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4B5563; /* bg-gray-600 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6B7280; /* bg-gray-500 */
+        }
+        .milestone-point {
+            transition: all 0.5s ease;
+        }
+    </style>
+</head>
+<body class="text-gray-200 p-4 sm:p-6 lg:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <!-- Header Section -->
+        <header class="mb-8 flex justify-between items-start">
+            <div>
+                <h1 class="text-3xl sm:text-4xl font-bold text-white mb-2">My AI Engineer Learning Journey</h1>
+                <p class="text-lg text-gray-400">A 9-month roadmap to becoming an AI expert.</p>
+            </div>
+            <div id="schedule-status-header" class="text-right flex-shrink-0 ml-4 pt-1">
+                <!-- Dynamic content will be injected here -->
+            </div>
+        </header>
+
+        <!-- Status Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <div class="lg:col-span-1 bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h2 class="text-xl font-semibold text-white mb-4">Current Status</h2>
+                <div id="current-status-content" class="space-y-3">
+                    <!-- Dynamic content will be injected here -->
+                </div>
+            </div>
+            <div class="lg:col-span-2 bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col justify-center">
+                <h2 class="text-xl font-semibold text-white mb-4">Overall Progress</h2>
+                <div class="relative w-full bg-gray-700 rounded-full h-6">
+                    <div id="progress-bar" class="bg-blue-600 h-6 rounded-full transition-all duration-1000 ease-out"></div>
+                    <span id="progress-text" class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white mix-blend-difference">0%</span>
+                </div>
+                <p id="progress-subtitle" class="text-center mt-2 text-gray-400"></p>
+            </div>
+        </div>
+
+        <!-- Milestones Section -->
+        <div id="milestones-container" class="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+            <h2 class="text-xl font-semibold text-white mb-8">Milestones</h2>
+            <div class="relative pt-8">
+                <div class="absolute top-1/2 -translate-y-1/2 h-1 w-full bg-gray-600">
+                    <div id="milestone-progress-bar" class="h-1 bg-emerald-500 transition-all duration-1000 ease-out" style="width: 0%;"></div>
+                </div>
+                <div id="milestones-list" class="relative flex justify-between">
+                    <!-- Milestones will be injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Schedule Grid -->
+        <main id="schedule-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <!-- Schedule cards will be injected here by JavaScript -->
+        </main>
+    </div>
+
+    <script>
+        const scheduleData = {
+          "program_start_date": "2025-10-01",
+          "hours_per_week": 30,
+          "study_days_per_week": 6,
+          "note": "Updated to 30 hrs/week, added cert prep blocks, AWS/SageMaker labs, OpenAI + Hugging Face integration, and resource links.",
+          "weeks": [
+            { "week": 1, "phase": "Phase 1: Python & ML Fundamentals", "course": "CS50's Introduction to Programming with Python", "topic": "Functions, Variables", "lecture": "Lecture 0: Functions, Variables", "daily_tasks": { "day_1": ["Watch Lecture 0: Functions, Variables (90 min)", "Set up Python environment (VS Code, Python 3.11)", "Join CS50 Discord community"], "day_2": ["Complete Problem Set 0: Indoor Voice (1 hour)", "Complete Problem Set 0: Playback Speed (1 hour)", "Complete Problem Set 0: Making Faces (1 hour)"], "day_3": ["Review functions and variables concepts", "Practice: Write 3 custom functions", "Start thinking about final project ideas"], "day_4": ["Watch Lecture 1: Conditionals (90 min)", "Take notes on if/elif/else statements"], "day_5": ["Complete Problem Set 1: Deep Thought (45 min)", "Complete Problem Set 1: Home Federal Savings Bank (1 hour)", "Complete Problem Set 1: File Extensions (1.5 hours)"], "day_6": ["Complete Problem Set 1: Math Interpreter (1 hour)", "Complete Problem Set 1: Meal Time (1.5 hours)", "Review week's concepts"] } },
+            { "week": 2, "phase": "Phase 1: Python & ML Fundamentals", "course": "CS50's Introduction to Programming with Python", "topic": "Loops", "lecture": "Lecture 2: Loops", "daily_tasks": { "day_1": ["Watch Lecture 2: Loops - while loops (45 min)", "Practice: Write 3 while loop examples", "Read CS50 Python documentation on loops"], "day_2": ["Watch Lecture 2: Loops - for loops (45 min)", "Practice: Convert while loops to for loops", "Understand loop iteration patterns"], "day_3": ["Complete Problem Set 2: camelCase (1 hour)", "Complete Problem Set 2: Coke Machine (1.5 hours)", "Debug common loop errors"], "day_4": ["Complete Problem Set 2: Just setting up my twttr (1.5 hours)", "Complete Problem Set 2: Vanity Plates (2 hours)"], "day_5": ["Complete Problem Set 2: Nutrition Facts (2 hours)", "Review all loop patterns learned", "Practice nested loops"], "day_6": ["Watch Lecture 3: Exceptions (90 min)", "Take notes on try/except blocks", "Understand error handling"] } },
+            { "week": 3, "phase": "Phase 1: Python & ML Fundamentals", "course": "CS50's Introduction to Programming with Python", "topic": "Exceptions", "lecture": "Lecture 3: Exceptions", "daily_tasks": { "day_1": ["Review Lecture 3: Exceptions", "Practice: Write functions with error handling", "Understand ValueError, TypeError, etc."], "day_2": ["Complete Problem Set 3: Fuel Gauge (1.5 hours)", "Complete Problem Set 3: Felipe's Taqueria (1.5 hours)"], "day_3": ["Complete Problem Set 3: Grocery List (2 hours)", "Practice exception handling in real scenarios"], "day_4": ["Watch Lecture 4: Libraries (90 min)", "Learn about import statements", "Explore Python standard library"], "day_5": ["Complete Problem Set 4: Emojize (1 hour)", "Complete Problem Set 4: Frank, Ian and Glen's Letters (1.5 hours)", "Complete Problem Set 4: Adieu, Adieu (1.5 hours)"], "day_6": ["Complete Problem Set 4: Guessing Game (1.5 hours)", "Complete Problem Set 4: Little Professor (2 hours)", "Review libraries learned"] } },
+            { "week": 4, "phase": "Phase 1: Python & ML Fundamentals", "course": "CS50's Introduction to Programming with Python", "topic": "Unit Tests", "lecture": "Lecture 5: Unit Tests", "daily_tasks": { "day_1": ["Watch Lecture 5: Unit Tests (90 min)", "Learn pytest framework", "Understand test-driven development"], "day_2": ["Complete Problem Set 5: Testing my twttr (1.5 hours)", "Complete Problem Set 5: Back to the Bank (1.5 hours)"], "day_3": ["Complete Problem Set 5: Re-requesting a Vanity Plate (2 hours)", "Complete Problem Set 5: Refueling (2 hours)"], "day_4": ["Watch Lecture 6: File I/O (90 min)", "Learn to read/write files", "Understand CSV handling"], "day_5": ["Complete Problem Set 6: Lines of Code (1.5 hours)", "Complete Problem Set 6: Pizza Py (2 hours)"], "day_6": ["Complete Problem Set 6: Scourgify (2 hours)", "Complete Problem Set 6: CS50 P-Shirt (2 hours)", "Review file operations"] } },
+            { "week": 5, "phase": "Phase 1: Python & ML Fundamentals", "course": "CS50's Introduction to Programming with Python", "topic": "Regular Expressions", "lecture": "Lecture 7: Regular Expressions", "daily_tasks": { "day_1": ["Watch Lecture 7: Regular Expressions (90 min)", "Learn regex patterns", "Practice on regex101.com"], "day_2": ["Complete Problem Set 7: NUMB3RS (1.5 hours)", "Complete Problem Set 7: Watch on YouTube (2 hours)"], "day_3": ["Complete Problem Set 7: Working 9 to 5 (2 hours)", "Complete Problem Set 7: Regular, um, Expressions (2 hours)"], "day_4": ["Complete Problem Set 7: Response Validation (2 hours)", "Practice complex regex patterns"], "day_5": ["Watch Lecture 8: Object-Oriented Programming (90 min)", "Learn classes and objects", "Understand OOP principles"], "day_6": ["Complete Problem Set 8: Seasons of Love (2 hours)", "Complete Problem Set 8: Cookie Jar (2 hours)", "Review OOP concepts"] } },
+            { "week": 6, "phase": "Phase 1: Python & ML Fundamentals", "course": "CS50's Introduction to Programming with Python", "topic": "Object-Oriented Programming (continued)", "lecture": "Lecture 8: OOP", "daily_tasks": { "day_1": ["Complete Problem Set 8: CS50 Shirtificate (2.5 hours)", "Practice creating classes"], "day_2": ["Watch Lecture 9: Et Cetera (90 min)", "Learn set, dict, args, kwargs", "Understand list comprehensions"], "day_3": ["Complete Problem Set 9: Final Project Proposal", "Brainstorm 3-5 project ideas", "Write project proposal (1-2 pages)"], "day_4": ["Research libraries needed for final project", "Set up project repository on GitHub", "Create project structure"], "day_5": ["Start coding final project (4 hours)", "Implement core functionality", "Write initial tests"], "day_6": ["Continue final project development (4 hours)", "Debug and refine code", "Add error handling"] } },
+            { "week": 7, "phase": "Phase 1: Python & ML Fundamentals", "course": "CS50's Introduction to Programming with Python", "topic": "Final Project", "daily_tasks": { "day_1": ["Final project development (4 hours)", "Complete main features", "Write comprehensive tests"], "day_2": ["Final project development (4 hours)", "Add documentation", "Create README.md"], "day_3": ["Final project development (4 hours)", "Polish user interface", "Handle edge cases"], "day_4": ["Record project demo video (2 hours)", "Write project description", "Prepare for submission"], "day_5": ["Submit CS50 Python final project", "Review entire course material", "Celebrate completion! 🎉"], "day_6": ["Optional: Apply for edX Verified Certificate (see CS50P page)", "Update LinkedIn with certification", "Share achievement on social media", "Links: CS50P (cs50.harvard.edu/python), edX verified track"] } },
+            { "week": 8, "phase": "Phase 1: Python & ML Fundamentals", "course": "Python for Data Science", "topic": "NumPy Fundamentals", "daily_tasks": { "day_1": ["Install Anaconda/Jupyter", "Learn NumPy basics: arrays, indexing (2 hours)", "Practice array operations"], "day_2": ["NumPy: broadcasting, vectorization (2 hours)", "Complete 10 NumPy exercises", "Understand array manipulation"], "day_3": ["NumPy: linear algebra operations (2 hours)", "Practice matrix operations", "Learn random number generation"], "day_4": ["Start pandas: Series and DataFrames (2 hours)", "Learn data loading (CSV, Excel)", "Practice basic data inspection"], "day_5": ["Pandas: data selection and filtering (2.5 hours)", "Learn loc, iloc, boolean indexing", "Practice data slicing"], "day_6": ["Pandas: data cleaning (2.5 hours)", "Handle missing values", "Remove duplicates", "Data type conversion"] } },
+            { "week": 9, "phase": "Phase 1: Python & ML Fundamentals", "course": "Python for Data Science", "topic": "Pandas & Data Visualization", "daily_tasks": { "day_1": ["Pandas: groupby and aggregation (2 hours)", "Practice pivot tables", "Learn merge and join operations"], "day_2": ["Matplotlib basics (2 hours)", "Create line plots, bar charts, scatter plots", "Customize plot appearance"], "day_3": ["Seaborn for statistical visualization (2 hours)", "Create heatmaps, violin plots", "Practice data visualization"], "day_4": ["Git & GitHub tutorial (3 hours)", "Learn git commands: init, add, commit, push", "Create GitHub account and first repo"], "day_5": ["GitHub: branching, merging, pull requests (2 hours)", "Practice collaborative workflows", "Set up SSH keys"], "day_6": ["Review NumPy, pandas, Git concepts", "Complete practice exercises", "Prepare for ML Specialization"] } },
+            { "week": 10, "phase": "Phase 1: Python & ML Fundamentals", "course": "Machine Learning Specialization - Course 1", "topic": "Supervised Learning: Regression", "daily_tasks": { "day_1": ["Watch: Introduction to Machine Learning (1 hour)", "Watch: Supervised vs Unsupervised Learning (45 min)", "Understand ML terminology"], "day_2": ["Watch: Linear Regression with One Variable (1.5 hours)", "Understand cost function", "Learn gradient descent"], "day_3": ["Complete Lab: Linear Regression (2 hours)", "Implement gradient descent in Python", "Visualize cost function"], "day_4": ["Watch: Linear Regression with Multiple Variables (1.5 hours)", "Learn feature scaling", "Understand vectorization"], "day_5": ["Complete Lab: Multiple Linear Regression (2.5 hours)", "Practice feature engineering", "Implement in NumPy"], "day_6": ["Watch: Polynomial Regression (1 hour)", "Complete practice quiz", "Review week's concepts"] } },
+            { "week": 11, "phase": "Phase 1: Python & ML Fundamentals", "course": "Machine Learning Specialization - Course 1", "topic": "Supervised Learning: Classification", "daily_tasks": { "day_1": ["Watch: Logistic Regression (1.5 hours)", "Understand sigmoid function", "Learn classification concepts"], "day_2": ["Watch: Cost Function for Logistic Regression (1 hour)", "Understand log loss", "Learn regularization"], "day_3": ["Complete Lab: Logistic Regression (2.5 hours)", "Implement binary classification", "Visualize decision boundary"], "day_4": ["Watch: Overfitting and Regularization (1.5 hours)", "Understand bias-variance tradeoff", "Learn L1/L2 regularization"], "day_5": ["Complete Lab: Regularized Logistic Regression (2 hours)", "Practice on real dataset", "Tune hyperparameters"], "day_6": ["Complete Course 1 final quiz", "Review all concepts", "Celebrate ML fundamentals completion!"] } },
+            { "week": 12, "phase": "Phase 1: Python & ML Fundamentals", "course": "Machine Learning Specialization - Course 2", "topic": "Neural Networks Basics", "daily_tasks": { "day_1": ["Watch: Introduction to Neural Networks (1.5 hours)", "Understand neurons and layers", "Learn forward propagation"], "day_2": ["Watch: TensorFlow Implementation (1.5 hours)", "Set up TensorFlow environment", "Build first neural network"], "day_3": ["Complete Lab: Neural Network for Binary Classification (2.5 hours)", "Train on real dataset", "Evaluate performance"], "day_4": ["Watch: Neural Network Training (1.5 hours)", "Understand backpropagation", "Learn activation functions"], "day_5": ["Complete Lab: Multi-class Classification (2.5 hours)", "Implement softmax", "Practice on MNIST-like dataset"], "day_6": ["Watch: Practical Tips for Neural Networks (1 hour)", "Learn debugging strategies", "Complete practice quiz"] } },
+            { "week": 13, "phase": "Phase 1: Python & ML Fundamentals", "course": "Machine Learning Specialization - Course 2", "topic": "ML Development & Project 1", "daily_tasks": { "day_1": ["Watch: Advice for Applying ML (1.5 hours)", "Learn train/dev/test split", "Understand evaluation metrics"], "day_2": ["Watch: ML System Design (1 hour)", "Learn error analysis", "Complete Course 2 final quiz"], "day_3": ["Earn ML Specialization certificate", "Update LinkedIn", "Plan Project 1: Python Data Analysis Tool"], "day_4": ["PROJECT 1: Set up project repo", "Choose dataset (Korean news or stock prices)", "Write project plan and README"], "day_5": ["PROJECT 1: Data collection and cleaning (4 hours)", "Implement data pipeline", "Exploratory data analysis"], "day_6": ["PROJECT 1: Build analysis tool (4 hours)", "Create visualizations", "Add sentiment analysis or predictions"] } },
+            { "week": 14, "phase": "Phase 1: Python & ML Fundamentals", "course": "Project 1 Completion", "topic": "Python Data Analysis Tool", "daily_tasks": { "day_1": ["PROJECT 1: Complete core functionality (4 hours)", "Add error handling", "Write unit tests"], "day_2": ["PROJECT 1: Polish and document (3 hours)", "Write comprehensive README", "Add usage examples"], "day_3": ["PROJECT 1: Deploy to GitHub (2 hours)", "Create demo video/screenshots", "Write blog post about project"], "day_4": ["Review Phase 1 achievements", "Update portfolio website", "Reflect on learning progress"], "day_5": ["Prepare for Phase 2: Deep Learning", "Review neural network concepts", "Set up PyTorch environment"], "day_6": ["Rest and recharge", "Plan next 13 weeks", "Celebrate Phase 1 completion! 🎉"] } },
+            { "week": 15, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "Deep Learning Specialization - Course 1", "topic": "Neural Networks Foundations", "daily_tasks": { "day_1": ["Watch: Introduction to Deep Learning (1 hour)", "Understand deep learning applications", "Set up course environment"], "day_2": ["Watch: Neural Network Basics (2 hours)", "Learn logistic regression as neural network", "Understand vectorization"], "day_3": ["Complete Lab: Python and Vectorization (2 hours)", "Practice NumPy operations", "Optimize code performance"], "day_4": ["Watch: Shallow Neural Networks (2 hours)", "Understand hidden layers", "Learn activation functions (tanh, ReLU)"], "day_5": ["Complete Lab: Planar Data Classification (3 hours)", "Build 2-layer neural network", "Visualize decision boundaries"], "day_6": ["Watch: Deep Neural Networks (2 hours)", "Understand L-layer networks", "Learn forward/backward propagation"] } },
+            { "week": 16, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "Deep Learning Specialization - Course 1", "topic": "Deep Neural Networks", "daily_tasks": { "day_1": ["Complete Lab: Building Deep Neural Network (3 hours)", "Implement L-layer network from scratch", "Debug implementation"], "day_2": ["Complete Lab: Deep Neural Network Application (3 hours)", "Train on image dataset", "Analyze results"], "day_3": ["Complete Course 1 final assignment", "Review all concepts", "Take final quiz"], "day_4": ["Earn Deep Learning Course 1 certificate", "Update portfolio", "Review week's learning"], "day_5": ["Start Course 2: Watch Practical Aspects of Deep Learning (2 hours)", "Learn train/dev/test sets", "Understand bias-variance"], "day_6": ["Watch: Regularization Techniques (2 hours)", "Learn dropout, L2 regularization", "Understand data augmentation"] } },
+            { "week": 17, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "Deep Learning Specialization - Course 2", "topic": "Optimization & Hyperparameter Tuning", "daily_tasks": { "day_1": ["Complete Lab: Regularization (2.5 hours)", "Implement dropout and L2", "Compare results"], "day_2": ["Watch: Optimization Algorithms (2 hours)", "Learn mini-batch gradient descent", "Understand momentum, RMSprop, Adam"], "day_3": ["Complete Lab: Optimization Methods (3 hours)", "Implement Adam optimizer", "Compare convergence speeds"], "day_4": ["Watch: Hyperparameter Tuning (1.5 hours)", "Learn tuning strategies", "Understand batch normalization"], "day_5": ["Complete Lab: TensorFlow Introduction (2.5 hours)", "Build models in TensorFlow", "Practice Keras API"], "day_6": ["Complete Course 2 final assignment", "Take final quiz", "Earn Course 2 certificate"] } },
+            { "week": 18, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "Deep Learning Specialization - Course 4 (CNNs - Light Coverage)", "topic": "Convolutional Neural Networks Basics", "daily_tasks": { "day_1": ["Watch: CNN Foundations (2 hours)", "Understand convolution operation", "Learn pooling layers"], "day_2": ["Watch: Classic CNN Architectures (1.5 hours)", "Study LeNet, AlexNet, VGG", "Understand architecture evolution"], "day_3": ["Complete Lab: CNN Implementation (2 hours)", "Build simple CNN for image classification", "Train on small dataset"], "day_4": ["Watch: ResNets and Transfer Learning (1.5 hours)", "Understand skip connections", "Learn transfer learning"], "day_5": ["Complete Lab: Transfer Learning (2 hours)", "Use pre-trained models", "Fine-tune for custom task"], "day_6": ["Review CNN concepts", "Understand when to use CNNs", "Prepare for Sequence Models (main focus)"] } },
+            { "week": 19, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "Deep Learning Specialization - Course 5", "topic": "Recurrent Neural Networks", "daily_tasks": { "day_1": ["Watch: Sequence Models Introduction (1.5 hours)", "Understand sequential data", "Learn RNN basics"], "day_2": ["Watch: RNN Architecture (2 hours)", "Understand backpropagation through time", "Learn vanishing gradient problem"], "day_3": ["Complete Lab: Building RNN (3 hours)", "Implement RNN from scratch", "Train on text data"], "day_4": ["Watch: LSTM and GRU (2 hours)", "Understand gating mechanisms", "Learn when to use LSTM vs GRU"], "day_5": ["Complete Lab: LSTM Implementation (3 hours)", "Build LSTM for sequence prediction", "Compare with vanilla RNN"], "day_6": ["Watch: Bidirectional RNNs (1 hour)", "Understand bidirectional processing", "Review week's concepts"] } },
+            { "week": 20, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "Deep Learning Specialization - Course 5", "topic": "Word Embeddings & NLP", "daily_tasks": { "day_1": ["Watch: Word Embeddings (2 hours)", "Understand Word2Vec, GloVe", "Learn embedding properties"], "day_2": ["Complete Lab: Word Embeddings (2.5 hours)", "Use pre-trained embeddings", "Visualize word relationships"], "day_3": ["Watch: Sentiment Classification (1.5 hours)", "Build sentiment analysis model", "Understand embedding layers"], "day_4": ["Complete Lab: Sentiment Analysis with RNN (3 hours)", "Train on movie reviews", "Evaluate performance"], "day_5": ["Watch: Sequence-to-Sequence Models (2 hours)", "Understand encoder-decoder", "Learn machine translation"], "day_6": ["Complete Lab: Neural Machine Translation (3 hours)", "Build seq2seq model", "Implement attention mechanism"] } },
+            { "week": 21, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "Deep Learning Specialization - Course 5", "topic": "Attention Mechanisms & Transformers", "daily_tasks": { "day_1": ["Watch: Attention Mechanism (2 hours)", "Understand attention weights", "Learn Bahdanau vs Luong attention"], "day_2": ["Watch: Transformer Architecture (2.5 hours)", "Understand self-attention", "Learn multi-head attention"], "day_3": ["Watch: BERT, GPT, and Modern NLP (2 hours)", "Understand pre-training and fine-tuning", "Learn about LLMs"], "day_4": ["Complete Lab: Transformer Implementation (3 hours)", "Build transformer from scratch", "Train on text data"], "day_5": ["Complete Course 5 final assignment", "Take final quiz", "Earn Course 5 certificate"], "day_6": ["Celebrate Deep Learning Specialization completion! 🎉", "Update LinkedIn with certificate", "Review all DL concepts"] } },
+            { "week": 22, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "Project 2: Deep Learning Model", "topic": "Building ML Model", "daily_tasks": { "day_1": ["PROJECT 2: Choose project (Korean text classifier or image recognition)", "Set up project repo", "Write project plan"], "day_2": ["PROJECT 2: Data collection and preprocessing (4 hours)", "Clean and prepare dataset", "Split train/dev/test"], "day_3": ["PROJECT 2: Build baseline model (4 hours)", "Implement simple model", "Establish baseline performance"], "day_4": ["PROJECT 2: Improve model (4 hours)", "Try different architectures", "Tune hyperparameters"], "day_5": ["PROJECT 2: Final model training (4 hours)", "Train best model", "Evaluate on test set"], "day_6": ["PROJECT 2: Documentation and deployment (3 hours)", "Write README", "Create demo", "Push to GitHub"] } },
+            { "week": 23, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "DeepLearning.AI LLM Short Courses", "topic": "ChatGPT & Prompt Engineering", "daily_tasks": { "day_1": ["Set up OpenAI API account", "Get API key", "Install openai Python package", "Create Hugging Face account & token", "Install transformers, datasets", "Login via huggingface-cli"], "day_2": ["Course: ChatGPT Prompt Engineering for Developers (3 hours)", "Learn prompting principles", "Practice prompt patterns"], "day_3": ["Course: Building Systems with ChatGPT API (3 hours)", "Build chatbot application", "Implement conversation memory"], "day_4": ["Practice: Build simple ChatGPT app (3 hours)", "Create Streamlit interface", "Add conversation history"], "day_5": ["Course: LangChain for LLM Application Development (3 hours)", "Learn LangChain basics", "Understand chains and agents"], "day_6": ["Practice: Build LangChain application (3 hours)", "Implement simple chain", "Test different prompts"] } },
+            { "week": 24, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "DeepLearning.AI LLM Short Courses", "topic": "RAG Systems & Vector Databases", "daily_tasks": { "day_1": ["Course: LangChain - Chat with Your Data (3 hours)", "Learn document loading", "Understand text splitting"], "day_2": ["Course: Building Applications with Vector Databases (3 hours)", "Learn embeddings", "Understand semantic search"], "day_3": ["Set up Pinecone/Weaviate account", "Practice vector database operations", "Store and retrieve embeddings (3 hours)"], "day_4": ["Course: Functions, Tools and Agents with LangChain (3 hours)", "Learn function calling", "Understand agents"], "day_5": ["Practice: Build simple RAG system (4 hours)", "Load documents", "Create vector store", "Implement retrieval"], "day_6": ["Practice: Improve RAG system (4 hours)", "Add re-ranking", "Optimize retrieval", "Test on different queries"] } },
+            { "week": 25, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "Project 3 Planning: RAG Chatbot (FLAGSHIP)", "topic": "RAG Chatbot Design", "daily_tasks": { "day_1": ["PROJECT 3: Choose domain (Korean legal docs or company knowledge base)", "Research requirements", "Define scope"], "day_2": ["PROJECT 3: Design system architecture (3 hours)", "Plan components", "Choose tech stack", "Write technical spec"], "day_3": ["PROJECT 3: Collect and prepare documents (4 hours)", "Gather data", "Clean and format", "Organize by category"], "day_4": ["PROJECT 3: Set up project structure (3 hours)", "Create repo", "Set up virtual environment", "Install dependencies"], "day_5": ["PROJECT 3: Implement document processing (4 hours)", "Load documents", "Split into chunks", "Create embeddings"], "day_6": ["PROJECT 3: Set up vector database (4 hours)", "Configure Pinecone/Weaviate", "Upload embeddings", "Test retrieval"] } },
+            { "week": 26, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "Project 3: RAG Chatbot Development", "topic": "Building RAG System", "daily_tasks": { "day_1": ["PROJECT 3: Implement retrieval logic (4 hours)", "Build semantic search", "Add re-ranking", "Test relevance"], "day_2": ["PROJECT 3: Integrate LLM (4 hours)", "Connect OpenAI API", "Implement prompt template", "Test responses"], "day_3": ["PROJECT 3: Build conversation interface (4 hours)", "Create Streamlit UI", "Add chat history", "Implement streaming"], "day_4": ["PROJECT 3: Add advanced features (4 hours)", "Implement source citations", "Add filters", "Improve UX"], "day_5": ["PROJECT 3: Testing and refinement (4 hours)", "Test edge cases", "Improve prompts", "Optimize performance"], "day_6": ["PROJECT 3: Error handling and logging (3 hours)", "Add try-except blocks", "Implement logging", "Handle API errors"] } },
+            { "week": 27, "phase": "Phase 2: Deep Learning & LLM Specialization", "course": "Project 3: RAG Chatbot Completion", "topic": "Polish and Deploy", "daily_tasks": { "day_1": ["PROJECT 3: Final testing (3 hours)", "User testing", "Fix bugs", "Improve responses"], "day_2": ["PROJECT 3: Documentation (4 hours)", "Write comprehensive README", "Add architecture diagram", "Create user guide"], "day_3": ["PROJECT 3: Create demo video (3 hours)", "Record walkthrough", "Show key features", "Upload to YouTube"], "day_4": ["PROJECT 3: Deploy to Streamlit Cloud (3 hours)", "Set up deployment", "Configure secrets", "Test live app"], "day_5": ["PROJECT 3: Write technical blog post (4 hours)", "Explain architecture", "Share learnings", "Post on Medium/Dev.to"], "day_6": ["Celebrate Phase 2 completion! 🎉", "Update portfolio", "Share project on LinkedIn", "Reflect on progress"] } },
+            { "week": 28, "phase": "Phase 3: Production MLOps & Portfolio", "course": "Made With ML - MLOps + Docker", "topic": "MLOps Foundations & Docker", "daily_tasks": { "day_1": ["Start Made With ML course", "Watch: Introduction to MLOps (1 hour)", "Understand ML lifecycle"], "day_2": ["Watch: Docker Basics (2 hours)", "Install Docker Desktop", "Learn docker commands"], "day_3": ["Practice: Containerize Python app (3 hours)", "Write Dockerfile", "Build and run container"], "day_4": ["Watch: Made With ML - Setup (2 hours)", "Set up development environment", "Clone course repo"], "day_5": ["Made With ML: Data Engineering (3 hours)", "Learn data versioning", "Practice with DVC"], "day_6": ["Made With ML: Feature Engineering (3 hours)", "Implement feature pipelines", "Practice transformations"] } },
+            { "week": 29, "phase": "Phase 3: Production MLOps & Portfolio", "course": "Made With ML + FastAPI", "topic": "Model Development & APIs", "daily_tasks": { "day_1": ["Made With ML: Model Development (3 hours)", "Learn experiment tracking", "Practice with MLflow"], "day_2": ["Made With ML: Model Evaluation (3 hours)", "Implement evaluation metrics", "Learn model selection"], "day_3": ["FastAPI Tutorial: Basics (3 hours)", "Install FastAPI", "Build first API", "Learn path operations"], "day_4": ["FastAPI: Request/Response Models (3 hours)", "Use Pydantic", "Validate data", "Handle errors"], "day_5": ["FastAPI: Build ML API (4 hours)", "Serve ML model", "Create prediction endpoint", "Test with Postman"], "day_6": ["FastAPI: Advanced Features (3 hours)", "Add authentication", "Implement rate limiting", "Add documentation"] } },
+            { "week": 30, "phase": "Phase 3: Production MLOps & Portfolio", "course": "Made With ML", "topic": "Testing & Deployment", "daily_tasks": { "day_1": ["Made With ML: Testing (3 hours)", "Learn unit testing for ML", "Implement data validation tests"], "day_2": ["Made With ML: Testing (continued) (3 hours)", "Model testing", "Integration tests", "Practice pytest"], "day_3": ["Made With ML: Deployment (3 hours)", "Learn deployment strategies", "Understand blue-green deployment"], "day_4": ["Made With ML: Containerization (3 hours)", "Dockerize ML application", "Multi-stage builds", "Optimize image size"], "day_5": ["Made With ML: CI/CD (3 hours)", "Set up GitHub Actions", "Automate testing", "Implement deployment pipeline"], "day_6": ["Practice: Build CI/CD pipeline (4 hours)", "Create workflow", "Test automation", "Deploy to staging"] } },
+            { "week": 31, "phase": "Phase 3: Production MLOps & Portfolio", "course": "Made With ML", "topic": "Monitoring & Observability", "daily_tasks": { "day_1": ["Made With ML: Monitoring (3 hours)", "Learn model monitoring", "Understand data drift"], "day_2": ["Made With ML: Logging (3 hours)", "Implement structured logging", "Set up log aggregation"], "day_3": ["Made With ML: Metrics (3 hours)", "Track model performance", "Set up alerts", "Create dashboards"], "day_4": ["Practice: Implement monitoring (4 hours)", "Add Prometheus metrics", "Create Grafana dashboard"], "day_5": ["Made With ML: Debugging (3 hours)", "Learn debugging strategies", "Practice troubleshooting"], "day_6": ["Review MLOps concepts", "Complete practice exercises", "Prepare for cloud deployment"] } },
+            { "week": 32, "phase": "Phase 3: Production MLOps & Portfolio", "course": "AWS Machine Learning Foundations", "topic": "Cloud Basics", "daily_tasks": { "day_1": ["Create AWS account", "Set up IAM user", "Learn AWS basics (2 hours)"], "day_2": ["AWS: EC2 Basics (2 hours)", "Launch instance", "SSH connection", "Deploy simple app"], "day_3": ["AWS: S3 Storage (2 hours)", "Create buckets", "Upload data", "Set permissions"], "day_4": ["AWS: Lambda Functions (2 hours)", "Create serverless function", "Set up triggers", "Test deployment"], "day_5": ["AWS: SageMaker Introduction (3 hours)", "Learn SageMaker basics", "Deploy model", "Create endpoint", "Hands-on: SageMaker Studio Lab/Notebook - Train and deploy a simple model (use sagemaker.workshop.aws)"], "day_6": ["Practice: Deploy ML model to AWS (4 hours)", "Use SageMaker or EC2", "Test API", "Monitor performance", "Hands-on: Use Amazon SageMaker endpoints; monitor invocation logs; cost estimation"] } },
+            { "week": 33, "phase": "Phase 3: Production MLOps & Portfolio", "course": "Made With ML - Advanced Topics", "topic": "Scaling & Optimization", "daily_tasks": { "day_1": ["Made With ML: Scaling (3 hours)", "Learn horizontal scaling", "Understand load balancing"], "day_2": ["Made With ML: Optimization (3 hours)", "Model optimization techniques", "Quantization", "Pruning"], "day_3": ["Made With ML: Batch Inference (3 hours)", "Implement batch processing", "Schedule jobs", "Optimize throughput"], "day_4": ["Made With ML: Real-time Inference (3 hours)", "Optimize latency", "Caching strategies", "Load testing"], "day_5": ["Made With ML: Cost Optimization (2 hours)", "Learn cost management", "Optimize resource usage"], "day_6": ["Review all MLOps concepts", "Complete Made With ML course", "Earn completion certificate"] } },
+            { "week": 34, "phase": "Phase 3: Production MLOps & Portfolio", "course": "AWS for ML Engineers - Practical Block (Part 1)", "topic": "Data + Training on AWS", "links": ["https://sagemaker.workshop.aws/en/", "https://github.com/aws/amazon-sagemaker-examples"], "daily_tasks": { "day_1": ["AWS IAM best practices for ML (roles, policies, least privilege)", "Set up per-project roles and S3 buckets"], "day_2": ["S3 + Glue + Athena for ML data lakes (hands-on)", "Partitioning, lifecycle policies"], "day_3": ["SageMaker Processing/Training jobs (built-in XGBoost and custom container)", "Tagging for cost tracking"], "day_4": ["SageMaker Pipelines for CI/CD of ML (build a minimal pipeline)", "Register models in SageMaker Model Registry"], "day_5": ["Spot training and cost optimization", "AutoPilot: baseline model + compare"], "day_6": ["Security: KMS encryption, VPC endpoints, private links", "Log aggregation with CloudWatch Logs/CloudTrail"] } },
+            { "week": 35, "phase": "Phase 3: Production MLOps & Portfolio", "course": "AWS for ML Engineers - Practical Block (Part 2)", "topic": "Deployment + Monitoring on AWS", "links": ["https://sagemaker.workshop.aws/en/", "https://github.com/aws/amazon-sagemaker-examples"], "daily_tasks": { "day_1": ["Real-time endpoints vs Serverless Inference vs Batch Transform (hands-on)", "Blue/green deployment in SageMaker"], "day_2": ["Multi-model endpoints and model sharding", "Autoscaling policies"], "day_3": ["Monitoring: data quality, model quality, drift monitors", "Alerts with CloudWatch and EventBridge"], "day_4": ["Shadow testing and canary releases", "Load testing with Locust/Artillery"], "day_5": ["Cost guardrails: budgets, alerts, cleanup scripts", "Prepare deployment runbooks"], "day_6": ["Wrap-up: document AWS patterns and decisions", "Update portfolio with AWS case study"] } },
+            { "week": 36, "phase": "Phase 3: Production MLOps & Portfolio", "course": "Project 4 Planning: Production ML API", "topic": "System Design", "daily_tasks": { "day_1": ["PROJECT 4: Plan production deployment of RAG chatbot", "Design architecture", "Choose cloud provider"], "day_2": ["PROJECT 4: Write technical specification (3 hours)", "Define requirements", "Plan infrastructure"], "day_3": ["PROJECT 4: Set up project structure (3 hours)", "Create repo", "Set up Docker", "Configure CI/CD"], "day_4": ["PROJECT 4: Refactor RAG chatbot for production (4 hours)", "Separate concerns", "Add configuration", "Improve error handling"], "day_5": ["PROJECT 4: Write comprehensive tests (4 hours)", "Unit tests", "Integration tests", "API tests"], "day_6": ["PROJECT 4: Set up monitoring (3 hours)", "Add logging", "Implement metrics", "Create health checks"] } },
+            { "week": 37, "phase": "Phase 3: Production MLOps & Portfolio", "course": "Project 4: Production Deployment", "topic": "Deploy to Cloud", "daily_tasks": { "day_1": ["PROJECT 4: Containerize application (4 hours)", "Write production Dockerfile", "Optimize image", "Test locally"], "day_2": ["PROJECT 4: Set up CI/CD pipeline (4 hours)", "Configure GitHub Actions", "Automate testing", "Deploy to staging"], "day_3": ["PROJECT 4: Deploy to AWS/GCP (4 hours)", "Set up infrastructure", "Deploy containers", "Configure networking"], "day_4": ["PROJECT 4: Set up monitoring dashboard (3 hours)", "Configure Grafana", "Add alerts", "Test monitoring"], "day_5": ["PROJECT 4: Load testing (3 hours)", "Test performance", "Optimize bottlenecks", "Ensure scalability"], "day_6": ["PROJECT 4: Final testing and documentation (4 hours)", "End-to-end testing", "Write deployment guide"] } },
+            { "week": 38, "phase": "Phase 3: Production MLOps & Portfolio", "course": "Project 4 Completion", "topic": "Polish and Document", "daily_tasks": { "day_1": ["PROJECT 4: Write comprehensive README (3 hours)", "Architecture diagram", "Setup instructions", "API documentation"], "day_2": ["PROJECT 4: Create demo video (3 hours)", "Show deployment process", "Demonstrate monitoring", "Explain architecture"], "day_3": ["PROJECT 4: Write technical blog post (4 hours)", "MLOps best practices", "Deployment challenges", "Lessons learned"], "day_4": ["PROJECT 4: Code review and cleanup (3 hours)", "Refactor code", "Add comments", "Improve documentation"], "day_5": ["PROJECT 4: Final deployment (3 hours)", "Deploy to production", "Test live system", "Monitor performance"], "day_6": ["Celebrate all 4 projects completed! 🎉", "Update portfolio", "Share on LinkedIn", "Reflect on journey"] } },
+            { "week": 39, "phase": "Phase 3: Production MLOps & Portfolio", "course": "Portfolio & Freelance Prep", "topic": "Portfolio Development", "daily_tasks": { "day_1": ["Create portfolio website (4 hours)", "Choose platform (GitHub Pages, Vercel)", "Design layout", "Add projects"], "day_2": ["Polish Project 1 (3 hours)", "Update README", "Add screenshots", "Improve documentation"], "day_3": ["Polish Project 2 (3 hours)", "Update README", "Add demo", "Improve code quality"], "day_4": ["Polish Project 3 - RAG Chatbot (4 hours)", "Ensure it's production-ready", "Update documentation", "Test thoroughly"], "day_5": ["Polish Project 4 (3 hours)", "Final touches", "Ensure monitoring works", "Update documentation"], "day_6": ["Write portfolio README (3 hours)", "Introduce yourself", "Highlight skills", "Link all projects"] } },
+            { "week": 40, "phase": "Phase 3: Production MLOps & Portfolio", "course": "Freelance Launch", "topic": "Start Freelancing", "daily_tasks": { "day_1": ["Create Upwork profile (3 hours)", "Write compelling bio", "Add portfolio", "Set rates ($50-70/hour)"], "day_2": ["Create Toptal application (3 hours)", "Complete profile", "Prepare for screening", "Submit application"], "day_3": ["Create Turing profile (2 hours)", "Complete technical assessment", "Add projects", "Submit profile"], "day_4": ["Write 5 freelance proposals (4 hours)", "Find relevant jobs on Upwork", "Customize proposals", "Submit applications"], "day_5": ["Technical interview prep (4 hours)", "Practice coding problems", "Review ML concepts", "Prepare project explanations"], "day_6": ["Celebrate 9-month program completion! 🎉🎉🎉", "Update LinkedIn: 'AI Engineer'", "Share journey", "Plan next steps"] } },
+            { "week": 41, "phase": "Certifications", "course": "TensorFlow Developer Certificate (Program status: prep only)", "topic": "TF/Keras Prep and Practice", "links": ["https://www.tensorflow.org/certificate", "https://www.coursera.org/learn/introduction-tensorflow", "https://www.coursera.org/specializations/deep-learning"], "daily_tasks": { "day_1": ["Keras API refresh: Sequential/Functional models; layers; callbacks"], "day_2": ["Computer vision: CNNs, data augmentation, transfer learning"], "day_3": ["NLP with TF: tokenization, embeddings, RNNs/Transformers (tf.data)"], "day_4": ["Training practices: learning rate schedules, early stopping, checkpoints"], "day_5": ["Practice: Reproduce 2 TF examples end-to-end (vision + text)"], "day_6": ["Mock exam: implement a model from scratch under time constraints"] }, "status": "placeholder_exam" },
+            { "week": 42, "phase": "Certifications", "course": "AWS Certified Machine Learning Engineer – Associate (Prep)", "topic": "Exam Domains + Labs", "links": ["https://aws.amazon.com/certification/certified-machine-learning-engineer-associate/", "https://sagemaker.workshop.aws/en/", "https://github.com/aws/amazon-sagemaker-examples"], "daily_tasks": { "day_1": ["Domain 1: Data Engineering (S3, Glue, Athena); lab: build data pipeline"], "day_2": ["Domain 2: Exploratory Data Analysis; lab: feature store + profiling"], "day_3": ["Domain 3: Modeling; lab: training jobs, hyperparameter tuning, registry"], "day_4": ["Domain 4: ML Ops; lab: Pipelines, CI/CD, monitoring"], "day_5": ["Practice questions + error log; focus weak areas"], "day_6": ["Full-length mock exam + review"] } },
+            { "week": 43, "phase": "Career Preparation", "course": "Interview & Soft Skills", "topic": "System Design for ML + Project storytelling", "links": ["https://github.com/dair-ai/ML-YouTube-Courses", "https://github.com/labuladong/fucking-algorithm"], "daily_tasks": { "day_1": ["Behavioral: STAR stories for projects (impact, metrics, lessons)"], "day_2": ["ML system design drills: data, training, deployment, monitoring"], "day_3": ["Coding: LeetCode/EPI-style DS&A (2 hrs), Python idioms (1 hr)"], "day_4": ["Portfolio polish: README, demos, architecture diagrams"], "day_5": ["Mock interviews (tech + behavioral); feedback incorporation"], "day_6": ["Targeted applications: 5 roles + tailored cover notes"] } }
+          ]
+        };
+        const STORAGE_KEY = 'aiLearningJourneyProgress';
+        let openWeekId = null;
+
+        const milestones = [
+            { name: "CS50P Cert.", week: 7 },
+            { name: "ML Spec. Cert.", week: 13 },
+            { name: "Project 1 Done", week: 14 },
+            { name: "DL Spec. Cert.", week: 21 },
+            { name: "Project 2 Done", week: 22 },
+            { name: "Project 3 Done", week: 27 },
+            { name: "MLOps Done", week: 33},
+            { name: "AWS ML Block Done", week: 35},
+            { name: "Project 4 Done", week: 38 },
+            { name: "Ready to Apply", week: 40 }
+        ];
+
+        // --- DATA PREPARATION ---
+        function prepareData() {
+            const savedState = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            scheduleData.weeks.forEach(week => {
+                if (week.daily_tasks) {
+                    Object.keys(week.daily_tasks).forEach(day => {
+                        const savedDayTasks = savedState[week.week]?.[day];
+                        const originalTasks = Array.isArray(week.daily_tasks[day]) ? week.daily_tasks[day] : [];
+                        week.daily_tasks[day] = originalTasks.map((task, index) => ({
+                            text: typeof task === 'string' ? task : task.text,
+                            completed: savedDayTasks?.[index] ?? false,
+                        }));
+                    });
+                }
+            });
+            updateAllWeekStatuses();
+        }
+
+        // --- STATE UPDATE LOGIC ---
+        function saveState() {
+            const completionState = {};
+            scheduleData.weeks.forEach(week => {
+                completionState[week.week] = {};
+                if (week.daily_tasks) {
+                    Object.keys(week.daily_tasks).forEach(day => {
+                        completionState[week.week][day] = week.daily_tasks[day].map(task => task.completed);
+                    });
+                }
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(completionState));
+        }
+
+        function updateWeekStatus(weekNumber) {
+            const weekData = scheduleData.weeks.find(w => w.week === weekNumber);
+            if (!weekData || !weekData.daily_tasks) return;
+
+            const allTasks = Object.values(weekData.daily_tasks).flat();
+            if (allTasks.length === 0) {
+                weekData.status = 'completed'; // No tasks = completed
+                return;
+            };
+
+            const allCompleted = allTasks.every(task => task.completed);
+            
+            if (allCompleted) {
+                weekData.status = 'completed';
+            } else {
+                const anyStarted = allTasks.some(task => task.completed);
+                if(anyStarted) {
+                    weekData.status = 'in_progress';
+                } else {
+                    weekData.status = 'not_started';
+                }
+            }
+        }
+        
+        function updateAllWeekStatuses() {
+            scheduleData.weeks.forEach(week => updateWeekStatus(week.week));
+        }
+        
+        // --- HELPERS ---
+        function isStudyDay(date) {
+            return date.getDay() !== 0; // 0 is Sunday
+        }
+
+
+        // --- RENDERING & UI UPDATES ---
+        function updateUI() {
+            updateCurrentStatusAndProgress();
+            updateMilestones();
+        }
+        
+        function updateCardUI(weekNum) {
+            const weekData = scheduleData.weeks.find(w => w.week === weekNum);
+            const card = document.getElementById(`week-${weekNum}`);
+            if(!card || !weekData) return;
+
+            card.className = `week-card bg-gray-800 p-5 rounded-lg shadow-lg status-${weekData.status}`;
+            const statusBadge = card.querySelector('.status-badge');
+            
+            statusBadge.textContent = weekData.status.replace(/_/g, ' ');
+            statusBadge.className = `status-badge text-xs font-semibold px-2 py-1 rounded-full ${
+                weekData.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
+                weekData.status === 'in_progress' ? 'bg-blue-500/20 text-blue-400' :
+                'bg-gray-500/20 text-gray-400'
+            }`;
+        }
+
+        function updateCurrentStatusAndProgress() {
+            const statusContainer = document.getElementById('current-status-content');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const progressSubtitle = document.getElementById('progress-subtitle');
+            const scheduleStatusHeader = document.getElementById('schedule-status-header');
+
+            let totalTasks = 0;
+            let completedTasks = 0;
+            scheduleData.weeks.forEach(week => {
+                if (week.daily_tasks) {
+                    const tasks = Object.values(week.daily_tasks).flat();
+                    totalTasks += tasks.length;
+                    completedTasks += tasks.filter(t => t.completed).length;
+                }
+            });
+
+            const progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+            progressBar.style.width = `${progressPercentage}%`;
+            progressText.textContent = `${Math.round(progressPercentage)}%`;
+            
+            // --- Schedule Adherence & Projections ---
+            const startDate = new Date(scheduleData.program_start_date);
+            const today = new Date(); 
+
+            // 1. Calculate the fixed Scheduled Completion Date
+            let totalStudyDaysInPlan = 0;
+            scheduleData.weeks.forEach(week => {
+                if (week.daily_tasks) totalStudyDaysInPlan += Object.keys(week.daily_tasks).length;
+            });
+            
+            let scheduledCompletionDate = new Date(startDate);
+            let studyDaysCounted = 0;
+            // This loop correctly finds the end date by only incrementing the counter on study days.
+            while (studyDaysCounted < totalStudyDaysInPlan) {
+                if (isStudyDay(scheduledCompletionDate)) {
+                    studyDaysCounted++;
+                }
+                // We always move to the next calendar day unless we're done.
+                if (studyDaysCounted < totalStudyDaysInPlan) {
+                   scheduledCompletionDate.setDate(scheduledCompletionDate.getDate() + 1);
+                }
+            }
+
+            // 2. Calculate how many study days SHOULD have passed by today
+            let scheduledStudyDaysToDate = 0;
+            if (today >= startDate) {
+                let currentDate = new Date(startDate);
+                while(currentDate <= today) {
+                    if(isStudyDay(currentDate)) {
+                        scheduledStudyDaysToDate++;
+                    }
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+            }
+
+            // 3. Calculate how many study days have ACTUALLY been completed
+            let actualCompletedStudyDays = 0;
+            scheduleData.weeks.forEach(week => {
+                if (week.daily_tasks) {
+                    Object.keys(week.daily_tasks).forEach(dayKey => {
+                        if (week.daily_tasks[dayKey].every(task => task.completed)) {
+                            actualCompletedStudyDays++;
+                        }
+                    });
+                }
+            });
+
+            // 4. Determine ahead/behind status and update header
+            const dayDelta = actualCompletedStudyDays - scheduledStudyDaysToDate;
+            let scheduleStatusHtml = '';
+            if (dayDelta < 0) {
+                scheduleStatusHtml = `<div class="text-lg font-semibold text-red-400">${Math.abs(dayDelta)} days behind</div>`;
+            } else if (dayDelta > 0) {
+                scheduleStatusHtml = `<div class="text-lg font-semibold text-green-400">${dayDelta} days ahead</div>`;
+            } else {
+                scheduleStatusHtml = `<div class="text-lg font-semibold text-gray-300">On Track</div>`;
+            }
+            scheduleStatusHeader.innerHTML = `
+                ${scheduleStatusHtml}
+                <div class="text-sm text-gray-400">Scheduled Finish: ${scheduledCompletionDate.toLocaleDateString()}</div>
+            `;
+
+            // 5. Calculate "Days Left" and "Est. Completion Date"
+            let incompleteStudyDays = 0;
+            scheduleData.weeks.forEach(week => {
+                if(week.daily_tasks) {
+                    Object.values(week.daily_tasks).forEach(dayTasks => {
+                        if (!dayTasks.every(task => task.completed)) {
+                            incompleteStudyDays++;
+                        }
+                    });
+                }
+            });
+
+            let estCompletionDateHtml = '';
+            if (incompleteStudyDays > 0) {
+                let estimatedDate = new Date(today);
+                let remainingDaysToCount = incompleteStudyDays;
+                while(remainingDaysToCount > 0) {
+                    estimatedDate.setDate(estimatedDate.getDate() + 1);
+                    if(isStudyDay(estimatedDate)) {
+                        remainingDaysToCount--;
+                    }
+                }
+                estCompletionDateHtml = `– Est. completion on ${estimatedDate.toLocaleDateString()}`;
+            } else if (completedTasks === totalTasks) {
+                estCompletionDateHtml = "– Journey Complete!";
+            }
+
+            progressSubtitle.innerHTML = `<span class="font-semibold">${incompleteStudyDays} study days left</span> ${estCompletionDateHtml}`;
+
+            // Update Current Status Card
+            let focusWeekData = scheduleData.weeks.find(week => week.status !== 'completed') || scheduleData.weeks[scheduleData.weeks.length - 1];
+            statusContainer.innerHTML = `
+                <p class="text-gray-300"><span class="font-semibold text-white">Start Date:</span> ${startDate.toLocaleDateString()}</p>
+                <p class="text-gray-300"><span class="font-semibold text-white">Focus:</span> Wk ${focusWeekData.week} - ${focusWeekData.topic}</p>
+            `;
+        }
+        
+        function isWeekCompleted(weekNum) {
+            const week = scheduleData.weeks.find(w => w.week === weekNum);
+            if (!week || !week.daily_tasks) return true; 
+            return Object.values(week.daily_tasks).flat().every(task => task.completed);
+        }
+
+        function updateMilestones() {
+            const listContainer = document.getElementById('milestones-list');
+            const progressBar = document.getElementById('milestone-progress-bar');
+            listContainer.innerHTML = '';
+            
+            let lastCompletedIndex = -1;
+
+            milestones.forEach((milestone, index) => {
+                const isCompleted = isWeekCompleted(milestone.week);
+                if (isCompleted) lastCompletedIndex = index;
+                
+                listContainer.innerHTML += `
+                    <div class="flex flex-col items-center text-center milestone-point">
+                        <div class="text-xs ${isCompleted ? 'text-emerald-400 font-semibold' : 'text-gray-400'} mb-2">${milestone.name}</div>
+                        <div class="w-5 h-5 rounded-full border-2 ${isCompleted ? 'bg-emerald-500 border-emerald-400' : 'bg-gray-700 border-gray-500'}"></div>
+                        <div class="text-xs text-gray-500 mt-2">Wk ${milestone.week}</div>
+                    </div>
+                `;
+            });
+            
+            const percentage = lastCompletedIndex > -1 
+                ? (lastCompletedIndex / (milestones.length - 1)) * 100
+                : 0;
+
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        function parseTaskTextForLinks(text) {
+            if (!text) return '';
+            const urlRegex = /(https?:\/\/[^\s,)]+)/g;
+            return text.replace(urlRegex, (url) => {
+                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">${url.split('//')[1]}</a>`;
+            });
+        }
+
+
+        function renderWeeks() {
+            const container = document.getElementById('schedule-container');
+            container.innerHTML = '';
+
+            scheduleData.weeks.forEach(week => {
+                const card = document.createElement('div');
+                card.className = `week-card bg-gray-800 p-5 rounded-lg shadow-lg status-${week.status}`;
+                card.id = `week-${week.week}`;
+                
+                let dailyTasksHtml = '<div class="mt-4 space-y-4">';
+                if (week.daily_tasks) {
+                    Object.keys(week.daily_tasks).forEach(day => {
+                        dailyTasksHtml += `<div><h5 class="font-semibold text-gray-300 mb-2">Day ${day.split('_')[1]}</h5><ul class="space-y-2">`;
+                        week.daily_tasks[day].forEach((task, index) => {
+                             dailyTasksHtml += `
+                                <li>
+                                    <label class="flex items-start cursor-pointer task-item">
+                                        <input type="checkbox" 
+                                               class="h-4 w-4 rounded border-gray-500 text-blue-500 bg-gray-700 focus:ring-blue-600 mt-1 flex-shrink-0"
+                                               data-week="${week.week}" data-day="${day}" data-task-index="${index}"
+                                               ${task.completed ? 'checked' : ''}>
+                                        <span class="ml-3 text-gray-300">${parseTaskTextForLinks(task.text)}</span>
+                                    </label>
+                                </li>`;
+                        });
+                        dailyTasksHtml += `</ul></div>`;
+                    });
+                }
+                if (week.links && week.links.length > 0) {
+                    dailyTasksHtml += `<div><h5 class="font-semibold text-gray-300 mb-2">Resources</h5><ul class="space-y-1">`;
+                    week.links.forEach(link => {
+                        dailyTasksHtml += `<li><a href="${link}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm">${link}</a></li>`;
+                    });
+                    dailyTasksHtml += `</ul></div>`;
+                }
+
+                dailyTasksHtml += '</div>';
+
+                card.innerHTML = `
+                    <div class="cursor-pointer toggle-details">
+                        <div class="flex justify-between items-start">
+                             <span class="text-sm font-medium text-gray-400">${week.phase}</span>
+                             <span class="status-badge text-xs font-semibold px-2 py-1 rounded-full ${
+                                week.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
+                                week.status === 'in_progress' ? 'bg-blue-500/20 text-blue-400' :
+                                'bg-gray-500/20 text-gray-400'
+                            }">${week.status.replace(/_/g, ' ')}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mt-2">Week ${week.week}: ${week.topic}</h3>
+                        <p class="text-sm text-gray-400 mt-1">${week.course}</p>
+                    </div>
+                    <div class="daily-tasks pt-4 border-t border-gray-700 mt-4">${dailyTasksHtml}</div>`;
+                container.appendChild(card);
+            });
+
+            addEventListeners();
+            
+            if (openWeekId) {
+                const openCard = document.getElementById(openWeekId);
+                if (openCard) {
+                    const content = openCard.querySelector('.daily-tasks');
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            }
+        }
+
+        // --- EVENT LISTENERS ---
+        function addEventListeners() {
+             const container = document.getElementById('schedule-container');
+            container.querySelectorAll('.toggle-details').forEach(header => {
+                header.addEventListener('click', () => {
+                    const parentCard = header.closest('.week-card');
+                    const content = parentCard.querySelector('.daily-tasks');
+                    const isOpening = !content.style.maxHeight || content.style.maxHeight === '0px';
+
+                    if (openWeekId && openWeekId !== parentCard.id) {
+                         const currentlyOpenCard = document.getElementById(openWeekId);
+                         if(currentlyOpenCard) {
+                            currentlyOpenCard.querySelector('.daily-tasks').style.maxHeight = '0px';
+                         }
+                    }
+                    
+                    if (isOpening) {
+                       content.style.maxHeight = content.scrollHeight + "px";
+                       openWeekId = parentCard.id;
+                    } else {
+                        content.style.maxHeight = '0px';
+                        openWeekId = null;
+                    }
+                });
+            });
+
+            container.addEventListener('change', (e) => {
+                if (e.target.matches('input[type="checkbox"]')) {
+                    const weekNum = parseInt(e.target.dataset.week);
+                    const dayKey = e.target.dataset.day;
+                    const taskIdx = parseInt(e.target.dataset.taskIndex);
+                    
+                    scheduleData.weeks.find(w => w.week === weekNum).daily_tasks[dayKey][taskIdx].completed = e.target.checked;
+                    
+                    saveState();
+                    updateWeekStatus(weekNum);
+                    updateCardUI(weekNum);
+                    updateUI();
+                }
+            });
+        }
+
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            prepareData();
+            renderWeeks();
+            updateUI();
+            
+            const initialOpenWeek = scheduleData.weeks.find(w => w.status !== 'completed') || scheduleData.weeks[0];
+            if (initialOpenWeek) {
+                 const cardToOpen = document.getElementById(`week-${initialOpenWeek.week}`);
+                 if (cardToOpen) {
+                    cardToOpen.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    const details = cardToOpen.querySelector('.daily-tasks');
+                    if (details) {
+                        openWeekId = cardToOpen.id;
+                        details.style.maxHeight = details.scrollHeight + "px";
+                    }
+                 }
+            }
+        });
+
+    </script>
+</body>
+</html>
+
