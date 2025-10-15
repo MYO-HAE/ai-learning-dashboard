@@ -9,9 +9,26 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Base Colors from Palette */
+        :root {
+            --bg-main: #013328;       /* The deep green */
+            --bg-card: #E3DCD2;       /* The light beige for all cards */
+            --accent-primary: #CC8B65; /* The copper/terracotta */
+            --text-light: #E3DCD2;    /* The light beige for text on dark bg */
+            --text-dark: #100C0D;      /* The near-black for text on light bg */
+            --text-secondary: #9CA3AF; /* A neutral gray for less important text on dark bg */
+            --text-secondary-dark: #52525b; /* Darker gray for text on light bg */
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #111827; /* bg-gray-900 */
+            background-color: var(--bg-main);
+            color: var(--text-light);
+        }
+        .card {
+            background-color: var(--bg-card);
+            color: var(--text-dark);
+            border-radius: 0.75rem; /* Equivalent to rounded-xl */
         }
         .week-card {
             border-left-width: 4px;
@@ -19,11 +36,11 @@
         }
         .week-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 15px -3px rgba(204, 139, 101, 0.1), 0 4px 6px -2px rgba(204, 139, 101, 0.05);
         }
-        .status-completed { border-color: #10B981; /* border-emerald-500 */ }
-        .status-in_progress { border-color: #3B82F6; /* border-blue-500 */ }
-        .status-not_started { border-color: #6B7280; /* border-gray-500 */ }
+        .status-completed { border-color: var(--accent-primary); }
+        .status-in_progress { border-color: #3B82F6; }
+        .status-not_started { border-color: var(--accent-primary); }
 
         .daily-tasks {
             max-height: 0;
@@ -33,85 +50,113 @@
 
         .task-item input:checked + span {
             text-decoration: line-through;
-            color: #6B7280; /* text-gray-500 */
+            color: #6B7280;
         }
         
-        /* Custom scrollbar for better aesthetics in dark mode */
-        ::-webkit-scrollbar {
-            width: 8px;
+        input[type="checkbox"]:checked {
+            background-color: var(--accent-primary);
+            border-color: var(--accent-primary);
         }
-        ::-webkit-scrollbar-track {
-            background: #1F2937; /* bg-gray-800 */
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
+        
+        .milestone-point { transition: all 0.5s ease; }
+
+        /* Modal Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #4B5563; /* bg-gray-600 */
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #6B7280; /* bg-gray-500 */
-        }
-        .milestone-point {
-            transition: all 0.5s ease;
+        
+        .custom-confirm-backdrop {
+            display: none; /* Hidden by default */
         }
     </style>
 </head>
-<body class="text-gray-200 p-4 sm:p-6 lg:p-8">
+<body class="p-4 sm:p-6 lg:p-8">
 
-    <div class="max-w-7xl mx-auto">
+    <!-- Start Date Modal -->
+    <div id="date-modal" class="modal-backdrop">
+        <div class="modal-content card text-center p-8">
+            <h2 class="text-2xl font-bold mb-4">Set Your Starting Date</h2>
+            <p class="text-[var(--text-secondary-dark)] mb-6">Select the date your AI engineering journey begins.</p>
+            <input type="date" id="start-date-input" class="bg-gray-200 text-black p-2 rounded-lg border border-gray-400 w-full mb-6">
+            <button id="save-start-date" class="bg-[var(--accent-primary)] hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg w-full">Let's Go!</button>
+        </div>
+    </div>
+    
+    <!-- Custom Confirmation Modal -->
+    <div id="custom-confirm" class="modal-backdrop custom-confirm-backdrop">
+        <div class="modal-content card text-center p-8">
+            <h2 id="confirm-title" class="text-2xl font-bold text-[var(--accent-primary)] mb-4">Giving up so soon?</h2>
+            <p id="confirm-message" class="text-[var(--text-secondary-dark)] mb-8">Are you sure you want to change the date and admit defeat?</p>
+            <div class="flex justify-center gap-4">
+                <button id="confirm-cancel" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-8 rounded-lg">No, I'm not weak.</button>
+                <button id="confirm-ok" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-8 rounded-lg">Yes, I'm a quitter.</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="main-content" class="max-w-7xl mx-auto" style="display: none;">
         <!-- Header Section -->
         <header class="mb-8 flex justify-between items-start">
             <div>
                 <h1 class="text-3xl sm:text-4xl font-bold text-white mb-2">My AI Engineer Learning Journey</h1>
-                <p class="text-lg text-gray-400">A roadmap to becoming an AI engineer.</p>
+                <p class="text-lg text-[var(--text-secondary)]">Your roadmap to becoming an AI expert.</p>
             </div>
-            <div id="schedule-status-header" class="text-right flex-shrink-0 ml-4 pt-1">
-                <!-- Dynamic content will be injected here -->
+            <div class="text-right flex-shrink-0 ml-4 pt-1">
+                 <div id="schedule-status-header"></div>
+                 <button id="settings-btn" class="mt-2 text-xs bg-gray-700 hover:bg-gray-600 text-[var(--text-secondary)] py-1 px-3 rounded-md">Reset Date</button>
             </div>
         </header>
 
         <!-- Status Section -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            <div class="lg:col-span-1 bg-gray-800 p-6 rounded-lg shadow-lg">
-                <h2 class="text-xl font-semibold text-white mb-4">Current Status</h2>
-                <div id="current-status-content" class="space-y-3">
-                    <!-- Dynamic content will be injected here -->
-                </div>
+            <div class="lg:col-span-1 card p-6 rounded-lg shadow-lg">
+                <h2 class="text-xl font-semibold mb-4">Current Status</h2>
+                <div id="current-status-content" class="space-y-3"></div>
             </div>
-            <div class="lg:col-span-2 bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col justify-center">
-                <h2 class="text-xl font-semibold text-white mb-4">Overall Progress</h2>
-                <div class="relative w-full bg-gray-700 rounded-full h-6">
-                    <div id="progress-bar" class="bg-blue-600 h-6 rounded-full transition-all duration-1000 ease-out"></div>
-                    <span id="progress-text" class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white mix-blend-difference">0%</span>
+            <div class="lg:col-span-2 card p-6 rounded-lg shadow-lg flex flex-col justify-center">
+                <h2 class="text-xl font-semibold mb-4">Overall Progress</h2>
+                <div class="relative w-full bg-gray-300 rounded-full h-6">
+                    <div id="progress-bar" class="bg-[var(--accent-primary)] h-6 rounded-full transition-all duration-1000 ease-out"></div>
+                    <span id="progress-text" class="absolute inset-0 flex items-center justify-center text-sm font-medium text-black">0%</span>
                 </div>
-                <p id="progress-subtitle" class="text-center mt-2 text-gray-400"></p>
+                <p id="progress-subtitle" class="text-center mt-2 text-[var(--text-secondary-dark)]"></p>
             </div>
         </div>
 
         <!-- Milestones Section -->
-        <div id="milestones-container" class="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
-            <h2 class="text-xl font-semibold text-white mb-8">Milestones</h2>
+        <div id="milestones-container" class="card p-6 rounded-lg shadow-lg mb-8">
+            <h2 class="text-xl font-semibold mb-8">Milestones</h2>
             <div class="relative pt-8">
-                <div class="absolute top-1/2 -translate-y-1/2 h-1 w-full bg-gray-600">
-                    <div id="milestone-progress-bar" class="h-1 bg-emerald-500 transition-all duration-1000 ease-out" style="width: 0%;"></div>
+                <div class="absolute top-1/2 -translate-y-1/2 h-1 w-full bg-gray-300">
+                    <div id="milestone-progress-bar" class="h-1 bg-[var(--accent-primary)] transition-all duration-1000 ease-out" style="width: 0%;"></div>
                 </div>
-                <div id="milestones-list" class="relative flex justify-between">
-                    <!-- Milestones will be injected here -->
-                </div>
+                <div id="milestones-list" class="relative flex justify-between"></div>
             </div>
         </div>
 
         <!-- Main Schedule Grid -->
-        <main id="schedule-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            <!-- Schedule cards will be injected here by JavaScript -->
-        </main>
+        <main id="schedule-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></main>
     </div>
 
     <script>
         const scheduleData = {
-          "program_start_date": "2025-10-01",
           "hours_per_week": 30,
           "study_days_per_week": 6,
-          "note": "Updated to 30 hrs/week, added cert prep blocks, AWS/SageMaker labs, OpenAI + Hugging Face integration, and resource links.",
           "weeks": [
             { "week": 1, "phase": "Phase 1: Python & ML Fundamentals", "course": "CS50's Introduction to Programming with Python", "topic": "Functions, Variables", "lecture": "Lecture 0: Functions, Variables", "daily_tasks": { "day_1": ["Watch Lecture 0: Functions, Variables (90 min)", "Set up Python environment (VS Code, Python 3.11)", "Join CS50 Discord community"], "day_2": ["Complete Problem Set 0: Indoor Voice (1 hour)", "Complete Problem Set 0: Playback Speed (1 hour)", "Complete Problem Set 0: Making Faces (1 hour)"], "day_3": ["Review functions and variables concepts", "Practice: Write 3 custom functions", "Start thinking about final project ideas"], "day_4": ["Watch Lecture 1: Conditionals (90 min)", "Take notes on if/elif/else statements"], "day_5": ["Complete Problem Set 1: Deep Thought (45 min)", "Complete Problem Set 1: Home Federal Savings Bank (1 hour)", "Complete Problem Set 1: File Extensions (1.5 hours)"], "day_6": ["Complete Problem Set 1: Math Interpreter (1 hour)", "Complete Problem Set 1: Meal Time (1.5 hours)", "Review week's concepts"] } },
             { "week": 2, "phase": "Phase 1: Python & ML Fundamentals", "course": "CS50's Introduction to Programming with Python", "topic": "Loops", "lecture": "Lecture 2: Loops", "daily_tasks": { "day_1": ["Watch Lecture 2: Loops - while loops (45 min)", "Practice: Write 3 while loop examples", "Read CS50 Python documentation on loops"], "day_2": ["Watch Lecture 2: Loops - for loops (45 min)", "Practice: Convert while loops to for loops", "Understand loop iteration patterns"], "day_3": ["Complete Problem Set 2: camelCase (1 hour)", "Complete Problem Set 2: Coke Machine (1.5 hours)", "Debug common loop errors"], "day_4": ["Complete Problem Set 2: Just setting up my twttr (1.5 hours)", "Complete Problem Set 2: Vanity Plates (2 hours)"], "day_5": ["Complete Problem Set 2: Nutrition Facts (2 hours)", "Review all loop patterns learned", "Practice nested loops"], "day_6": ["Watch Lecture 3: Exceptions (90 min)", "Take notes on try/except blocks", "Understand error handling"] } },
@@ -158,25 +203,51 @@
             { "week": 43, "phase": "Career Preparation", "course": "Interview & Soft Skills", "topic": "System Design for ML + Project storytelling", "links": ["https://github.com/dair-ai/ML-YouTube-Courses", "https://github.com/labuladong/fucking-algorithm"], "daily_tasks": { "day_1": ["Behavioral: STAR stories for projects (impact, metrics, lessons)"], "day_2": ["ML system design drills: data, training, deployment, monitoring"], "day_3": ["Coding: LeetCode/EPI-style DS&A (2 hrs), Python idioms (1 hr)"], "day_4": ["Portfolio polish: README, demos, architecture diagrams"], "day_5": ["Mock interviews (tech + behavioral); feedback incorporation"], "day_6": ["Targeted applications: 5 roles + tailored cover notes"] } }
           ]
         };
-        const STORAGE_KEY = 'aiLearningJourneyProgress';
+        const STORAGE_KEY_PROGRESS = 'aiLearningJourneyProgress';
+        const STORAGE_KEY_START_DATE = 'aiLearningJourneyStartDate';
         let openWeekId = null;
+        let programStartDate = null;
 
         const milestones = [
-            { name: "CS50P Cert.", week: 7 },
-            { name: "ML Spec. Cert.", week: 13 },
-            { name: "Project 1 Done", week: 14 },
-            { name: "DL Spec. Cert.", week: 21 },
-            { name: "Project 2 Done", week: 22 },
-            { name: "Project 3 Done", week: 27 },
-            { name: "MLOps Done", week: 33},
-            { name: "AWS ML Block Done", week: 35},
-            { name: "Project 4 Done", week: 38 },
-            { name: "Ready to Apply", week: 40 }
+            { name: "CS50P Cert.", week: 7 }, { name: "ML Spec. Cert.", week: 13 },
+            { name: "Project 1 Done", week: 14 }, { name: "DL Spec. Cert.", week: 21 },
+            { name: "Project 2 Done", week: 22 }, { name: "Project 3 Done", week: 27 },
+            { name: "MLOps Done", week: 33}, { name: "AWS ML Block Done", week: 35},
+            { name: "Project 4 Done", week: 38 }, { name: "Ready to Apply", week: 40 }
         ];
 
-        // --- DATA PREPARATION ---
+        // --- CUSTOM CONFIRM ---
+        function showCustomConfirm(callback) {
+            const confirmModal = document.getElementById('custom-confirm');
+            confirmModal.style.display = 'flex';
+            
+            return new Promise((resolve, reject) => {
+                const okBtn = document.getElementById('confirm-ok');
+                const cancelBtn = document.getElementById('confirm-cancel');
+
+                const cleanup = () => {
+                    okBtn.replaceWith(okBtn.cloneNode(true));
+                    cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+                    confirmModal.style.display = 'none';
+                };
+
+                okBtn.addEventListener('click', () => { cleanup(); resolve(true); });
+                cancelBtn.addEventListener('click', () => { cleanup(); resolve(false); });
+            });
+        }
+
+        // --- DATA & STATE ---
+        function setStartDate(dateString, isInitial = false) {
+             if (!dateString) return;
+             programStartDate = new Date(dateString + "T00:00:00");
+             localStorage.setItem(STORAGE_KEY_START_DATE, dateString);
+             if (!isInitial) {
+                 recalculateAndRerender();
+             }
+        }
+        
         function prepareData() {
-            const savedState = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+            const savedState = JSON.parse(localStorage.getItem(STORAGE_KEY_PROGRESS) || '{}');
             scheduleData.weeks.forEach(week => {
                 if (week.daily_tasks) {
                     Object.keys(week.daily_tasks).forEach(day => {
@@ -192,7 +263,6 @@
             updateAllWeekStatuses();
         }
 
-        // --- STATE UPDATE LOGIC ---
         function saveState() {
             const completionState = {};
             scheduleData.weeks.forEach(week => {
@@ -203,30 +273,19 @@
                     });
                 }
             });
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(completionState));
+            localStorage.setItem(STORAGE_KEY_PROGRESS, JSON.stringify(completionState));
         }
 
         function updateWeekStatus(weekNumber) {
             const weekData = scheduleData.weeks.find(w => w.week === weekNumber);
             if (!weekData || !weekData.daily_tasks) return;
-
             const allTasks = Object.values(weekData.daily_tasks).flat();
-            if (allTasks.length === 0) {
-                weekData.status = 'completed'; // No tasks = completed
-                return;
-            };
-
+            if (allTasks.length === 0) { weekData.status = 'completed'; return; };
             const allCompleted = allTasks.every(task => task.completed);
             
-            if (allCompleted) {
-                weekData.status = 'completed';
-            } else {
-                const anyStarted = allTasks.some(task => task.completed);
-                if(anyStarted) {
-                    weekData.status = 'in_progress';
-                } else {
-                    weekData.status = 'not_started';
-                }
+            if (allCompleted) weekData.status = 'completed';
+            else {
+                weekData.status = allTasks.some(task => task.completed) ? 'in_progress' : 'not_started';
             }
         }
         
@@ -234,31 +293,31 @@
             scheduleData.weeks.forEach(week => updateWeekStatus(week.week));
         }
         
-        // --- HELPERS ---
-        function isStudyDay(date) {
-            return date.getDay() !== 0; // 0 is Sunday
+        function isStudyDay(date) { return date.getDay() !== 0; }
+
+        function recalculateAndRerender() {
+            prepareData();
+            renderWeeks();
+            updateUI();
         }
-
-
-        // --- RENDERING & UI UPDATES ---
+        // --- UI & RENDERING ---
         function updateUI() {
+            if (!programStartDate) return;
             updateCurrentStatusAndProgress();
             updateMilestones();
         }
         
         function updateCardUI(weekNum) {
-            const weekData = scheduleData.weeks.find(w => w.week === weekNum);
+                    const weekData = scheduleData.weeks.find(w => w.week === weekNum);
             const card = document.getElementById(`week-${weekNum}`);
             if(!card || !weekData) return;
-
-            card.className = `week-card bg-gray-800 p-5 rounded-lg shadow-lg status-${weekData.status}`;
+            card.className = `card week-card p-5 rounded-lg shadow-lg status-${weekData.status}`;
             const statusBadge = card.querySelector('.status-badge');
-            
             statusBadge.textContent = weekData.status.replace(/_/g, ' ');
             statusBadge.className = `status-badge text-xs font-semibold px-2 py-1 rounded-full ${
-                weekData.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
+                weekData.status === 'completed' ? 'bg-yellow-500/20 text-[var(--accent-primary)]' :
                 weekData.status === 'in_progress' ? 'bg-blue-500/20 text-blue-400' :
-                'bg-gray-500/20 text-gray-400'
+                'bg-gray-500/20 text-[var(--text-secondary-dark)]'
             }`;
         }
 
@@ -269,8 +328,7 @@
             const progressSubtitle = document.getElementById('progress-subtitle');
             const scheduleStatusHeader = document.getElementById('schedule-status-header');
 
-            let totalTasks = 0;
-            let completedTasks = 0;
+            let totalTasks = 0, completedTasks = 0;
             scheduleData.weeks.forEach(week => {
                 if (week.daily_tasks) {
                     const tasks = Object.values(week.daily_tasks).flat();
@@ -283,76 +341,47 @@
             progressBar.style.width = `${progressPercentage}%`;
             progressText.textContent = `${Math.round(progressPercentage)}%`;
             
-            // --- Schedule Adherence & Projections ---
-            const startDate = new Date(scheduleData.program_start_date);
             const today = new Date(); 
-
-            // 1. Calculate the fixed Scheduled Completion Date
             let totalStudyDaysInPlan = 0;
-            scheduleData.weeks.forEach(week => {
-                if (week.daily_tasks) totalStudyDaysInPlan += Object.keys(week.daily_tasks).length;
-            });
+            scheduleData.weeks.forEach(week => { if (week.daily_tasks) totalStudyDaysInPlan += Object.keys(week.daily_tasks).length; });
             
-            let scheduledCompletionDate = new Date(startDate);
+            let scheduledCompletionDate = new Date(programStartDate);
             let studyDaysCounted = 0;
-            // This loop correctly finds the end date by only incrementing the counter on study days.
             while (studyDaysCounted < totalStudyDaysInPlan) {
-                if (isStudyDay(scheduledCompletionDate)) {
-                    studyDaysCounted++;
-                }
-                // We always move to the next calendar day unless we're done.
-                if (studyDaysCounted < totalStudyDaysInPlan) {
-                   scheduledCompletionDate.setDate(scheduledCompletionDate.getDate() + 1);
-                }
+                if (isStudyDay(scheduledCompletionDate)) studyDaysCounted++;
+                if (studyDaysCounted < totalStudyDaysInPlan) scheduledCompletionDate.setDate(scheduledCompletionDate.getDate() + 1);
             }
 
-            // 2. Calculate how many study days SHOULD have passed by today
             let scheduledStudyDaysToDate = 0;
-            if (today >= startDate) {
-                let currentDate = new Date(startDate);
+            if (today >= programStartDate) {
+                let currentDate = new Date(programStartDate);
                 while(currentDate <= today) {
-                    if(isStudyDay(currentDate)) {
-                        scheduledStudyDaysToDate++;
-                    }
+                    if(isStudyDay(currentDate)) scheduledStudyDaysToDate++;
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
             }
 
-            // 3. Calculate how many study days have ACTUALLY been completed
             let actualCompletedStudyDays = 0;
             scheduleData.weeks.forEach(week => {
                 if (week.daily_tasks) {
                     Object.keys(week.daily_tasks).forEach(dayKey => {
-                        if (week.daily_tasks[dayKey].every(task => task.completed)) {
-                            actualCompletedStudyDays++;
-                        }
+                        if (week.daily_tasks[dayKey].every(task => task.completed)) actualCompletedStudyDays++;
                     });
                 }
             });
 
-            // 4. Determine ahead/behind status and update header
             const dayDelta = actualCompletedStudyDays - scheduledStudyDaysToDate;
             let scheduleStatusHtml = '';
-            if (dayDelta < 0) {
-                scheduleStatusHtml = `<div class="text-lg font-semibold text-red-400">${Math.abs(dayDelta)} days behind</div>`;
-            } else if (dayDelta > 0) {
-                scheduleStatusHtml = `<div class="text-lg font-semibold text-green-400">${dayDelta} days ahead</div>`;
-            } else {
-                scheduleStatusHtml = `<div class="text-lg font-semibold text-gray-300">On Track</div>`;
-            }
-            scheduleStatusHeader.innerHTML = `
-                ${scheduleStatusHtml}
-                <div class="text-sm text-gray-400">Scheduled Finish: ${scheduledCompletionDate.toLocaleDateString()}</div>
-            `;
+            if (dayDelta < 0) scheduleStatusHtml = `<div class="text-lg font-semibold text-red-400">${Math.abs(dayDelta)} days behind</div>`;
+            else if (dayDelta > 0) scheduleStatusHtml = `<div class="text-lg font-semibold text-green-400">${dayDelta} days ahead</div>`;
+            else scheduleStatusHtml = `<div class="text-lg font-semibold text-[var(--text-secondary)]">On Track</div>`;
+            scheduleStatusHeader.innerHTML = `${scheduleStatusHtml}<div class="text-sm text-[var(--text-secondary)]">Scheduled Finish: ${scheduledCompletionDate.toLocaleDateString()}</div>`;
 
-            // 5. Calculate "Days Left" and "Est. Completion Date"
             let incompleteStudyDays = 0;
             scheduleData.weeks.forEach(week => {
                 if(week.daily_tasks) {
                     Object.values(week.daily_tasks).forEach(dayTasks => {
-                        if (!dayTasks.every(task => task.completed)) {
-                            incompleteStudyDays++;
-                        }
+                        if (!dayTasks.every(task => task.completed)) incompleteStudyDays++;
                     });
                 }
             });
@@ -363,9 +392,7 @@
                 let remainingDaysToCount = incompleteStudyDays;
                 while(remainingDaysToCount > 0) {
                     estimatedDate.setDate(estimatedDate.getDate() + 1);
-                    if(isStudyDay(estimatedDate)) {
-                        remainingDaysToCount--;
-                    }
+                    if(isStudyDay(estimatedDate)) remainingDaysToCount--;
                 }
                 estCompletionDateHtml = `– Est. completion on ${estimatedDate.toLocaleDateString()}`;
             } else if (completedTasks === totalTasks) {
@@ -374,11 +401,10 @@
 
             progressSubtitle.innerHTML = `<span class="font-semibold">${incompleteStudyDays} study days left</span> ${estCompletionDateHtml}`;
 
-            // Update Current Status Card
             let focusWeekData = scheduleData.weeks.find(week => week.status !== 'completed') || scheduleData.weeks[scheduleData.weeks.length - 1];
             statusContainer.innerHTML = `
-                <p class="text-gray-300"><span class="font-semibold text-white">Start Date:</span> ${startDate.toLocaleDateString()}</p>
-                <p class="text-gray-300"><span class="font-semibold text-white">Focus:</span> Wk ${focusWeekData.week} - ${focusWeekData.topic}</p>
+                <p class=""><span class="font-semibold">Start Date:</span> ${programStartDate.toLocaleDateString()}</p>
+                <p class=""><span class="font-semibold">Focus:</span> Wk ${focusWeekData.week} - ${focusWeekData.topic}</p>
             `;
         }
         
@@ -392,120 +418,73 @@
             const listContainer = document.getElementById('milestones-list');
             const progressBar = document.getElementById('milestone-progress-bar');
             listContainer.innerHTML = '';
-            
             let lastCompletedIndex = -1;
-
             milestones.forEach((milestone, index) => {
                 const isCompleted = isWeekCompleted(milestone.week);
                 if (isCompleted) lastCompletedIndex = index;
-                
                 listContainer.innerHTML += `
                     <div class="flex flex-col items-center text-center milestone-point">
-                        <div class="text-xs ${isCompleted ? 'text-emerald-400 font-semibold' : 'text-gray-400'} mb-2">${milestone.name}</div>
-                        <div class="w-5 h-5 rounded-full border-2 ${isCompleted ? 'bg-emerald-500 border-emerald-400' : 'bg-gray-700 border-gray-500'}"></div>
+                        <div class="text-xs ${isCompleted ? 'text-[var(--accent-primary)] font-semibold' : 'text-[var(--text-secondary-dark)]'} mb-2">${milestone.name}</div>
+                        <div class="w-5 h-5 rounded-full border-2 ${isCompleted ? 'bg-[var(--accent-primary)] border-[var(--accent-primary)]' : 'bg-gray-300 border-gray-400'}"></div>
                         <div class="text-xs text-gray-500 mt-2">Wk ${milestone.week}</div>
                     </div>
                 `;
             });
-            
-            const percentage = lastCompletedIndex > -1 
-                ? (lastCompletedIndex / (milestones.length - 1)) * 100
-                : 0;
-
+            const percentage = lastCompletedIndex > -1 ? (lastCompletedIndex / (milestones.length - 1)) * 100 : 0;
             progressBar.style.width = `${percentage}%`;
         }
 
         function parseTaskTextForLinks(text) {
             if (!text) return '';
             const urlRegex = /(https?:\/\/[^\s,)]+)/g;
-            return text.replace(urlRegex, (url) => {
-                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">${url.split('//')[1]}</a>`;
-            });
+            return text.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">${url.split('//')[1]}</a>`);
         }
-
 
         function renderWeeks() {
             const container = document.getElementById('schedule-container');
             container.innerHTML = '';
-
             scheduleData.weeks.forEach(week => {
                 const card = document.createElement('div');
-                card.className = `week-card bg-gray-800 p-5 rounded-lg shadow-lg status-${week.status}`;
+                card.className = `card week-card p-5 rounded-lg shadow-lg status-${week.status}`;
                 card.id = `week-${week.week}`;
-                
                 let dailyTasksHtml = '<div class="mt-4 space-y-4">';
                 if (week.daily_tasks) {
                     Object.keys(week.daily_tasks).forEach(day => {
-                        dailyTasksHtml += `<div><h5 class="font-semibold text-gray-300 mb-2">Day ${day.split('_')[1]}</h5><ul class="space-y-2">`;
+                        dailyTasksHtml += `<div><h5 class="font-semibold mb-2">Day ${day.split('_')[1]}</h5><ul class="space-y-2">`;
                         week.daily_tasks[day].forEach((task, index) => {
-                             dailyTasksHtml += `
-                                <li>
-                                    <label class="flex items-start cursor-pointer task-item">
-                                        <input type="checkbox" 
-                                               class="h-4 w-4 rounded border-gray-500 text-blue-500 bg-gray-700 focus:ring-blue-600 mt-1 flex-shrink-0"
-                                               data-week="${week.week}" data-day="${day}" data-task-index="${index}"
-                                               ${task.completed ? 'checked' : ''}>
-                                        <span class="ml-3 text-gray-300">${parseTaskTextForLinks(task.text)}</span>
-                                    </label>
-                                </li>`;
+                             dailyTasksHtml += `<li><label class="flex items-start cursor-pointer task-item"><input type="checkbox" class="h-4 w-4 rounded border-gray-400 text-[var(--accent-primary)] bg-gray-200 focus:ring-[var(--accent-primary)] mt-1 flex-shrink-0" data-week="${week.week}" data-day="${day}" data-task-index="${index}" ${task.completed ? 'checked' : ''}><span class="ml-3 text-[var(--text-secondary-dark)]">${parseTaskTextForLinks(task.text)}</span></label></li>`;
                         });
                         dailyTasksHtml += `</ul></div>`;
                     });
                 }
                 if (week.links && week.links.length > 0) {
-                    dailyTasksHtml += `<div><h5 class="font-semibold text-gray-300 mb-2">Resources</h5><ul class="space-y-1">`;
-                    week.links.forEach(link => {
-                        dailyTasksHtml += `<li><a href="${link}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline text-sm">${link}</a></li>`;
-                    });
+                    dailyTasksHtml += `<div><h5 class="font-semibold mb-2">Resources</h5><ul class="space-y-1">`;
+                    week.links.forEach(link => { dailyTasksHtml += `<li><a href="${link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline text-sm">${link}</a></li>`; });
                     dailyTasksHtml += `</ul></div>`;
                 }
-
                 dailyTasksHtml += '</div>';
-
-                card.innerHTML = `
-                    <div class="cursor-pointer toggle-details">
-                        <div class="flex justify-between items-start">
-                             <span class="text-sm font-medium text-gray-400">${week.phase}</span>
-                             <span class="status-badge text-xs font-semibold px-2 py-1 rounded-full ${
-                                week.status === 'completed' ? 'bg-emerald-500/20 text-emerald-400' :
-                                week.status === 'in_progress' ? 'bg-blue-500/20 text-blue-400' :
-                                'bg-gray-500/20 text-gray-400'
-                            }">${week.status.replace(/_/g, ' ')}</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-white mt-2">Week ${week.week}: ${week.topic}</h3>
-                        <p class="text-sm text-gray-400 mt-1">${week.course}</p>
-                    </div>
-                    <div class="daily-tasks pt-4 border-t border-gray-700 mt-4">${dailyTasksHtml}</div>`;
+                card.innerHTML = `<div class="cursor-pointer toggle-details"><div class="flex justify-between items-start"><span class="text-sm font-medium text-[var(--text-secondary-dark)]">${week.phase}</span><span class="status-badge text-xs font-semibold px-2 py-1 rounded-full ${week.status === 'completed' ? 'bg-yellow-500/20 text-[var(--accent-primary)]' : week.status === 'in_progress' ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-[var(--text-secondary-dark)]'}">${week.status.replace(/_/g, ' ')}</span></div><h3 class="text-xl font-bold mt-2">${week.topic}</h3><p class="text-sm text-[var(--text-secondary-dark)] mt-1">${week.course}</p></div><div class="daily-tasks pt-4 border-t border-gray-300 mt-4">${dailyTasksHtml}</div>`;
                 container.appendChild(card);
             });
-
             addEventListeners();
-            
             if (openWeekId) {
                 const openCard = document.getElementById(openWeekId);
-                if (openCard) {
-                    const content = openCard.querySelector('.daily-tasks');
-                    content.style.maxHeight = content.scrollHeight + 'px';
-                }
+                if (openCard) openCard.querySelector('.daily-tasks').style.maxHeight = openCard.querySelector('.daily-tasks').scrollHeight + 'px';
             }
         }
 
         // --- EVENT LISTENERS ---
         function addEventListeners() {
-             const container = document.getElementById('schedule-container');
+            const container = document.getElementById('schedule-container');
             container.querySelectorAll('.toggle-details').forEach(header => {
                 header.addEventListener('click', () => {
                     const parentCard = header.closest('.week-card');
                     const content = parentCard.querySelector('.daily-tasks');
                     const isOpening = !content.style.maxHeight || content.style.maxHeight === '0px';
-
                     if (openWeekId && openWeekId !== parentCard.id) {
                          const currentlyOpenCard = document.getElementById(openWeekId);
-                         if(currentlyOpenCard) {
-                            currentlyOpenCard.querySelector('.daily-tasks').style.maxHeight = '0px';
-                         }
+                         if(currentlyOpenCard) currentlyOpenCard.querySelector('.daily-tasks').style.maxHeight = '0px';
                     }
-                    
                     if (isOpening) {
                        content.style.maxHeight = content.scrollHeight + "px";
                        openWeekId = parentCard.id;
@@ -515,15 +494,12 @@
                     }
                 });
             });
-
             container.addEventListener('change', (e) => {
                 if (e.target.matches('input[type="checkbox"]')) {
                     const weekNum = parseInt(e.target.dataset.week);
                     const dayKey = e.target.dataset.day;
                     const taskIdx = parseInt(e.target.dataset.taskIndex);
-                    
                     scheduleData.weeks.find(w => w.week === weekNum).daily_tasks[dayKey][taskIdx].completed = e.target.checked;
-                    
                     saveState();
                     updateWeekStatus(weekNum);
                     updateCardUI(weekNum);
@@ -531,30 +507,60 @@
                 }
             });
         }
-
-
+        
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
-            prepareData();
-            renderWeeks();
-            updateUI();
+            const savedDate = localStorage.getItem(STORAGE_KEY_START_DATE);
+            const dateModal = document.getElementById('date-modal');
+            const mainContent = document.getElementById('main-content');
             
-            const initialOpenWeek = scheduleData.weeks.find(w => w.status !== 'completed') || scheduleData.weeks[0];
-            if (initialOpenWeek) {
-                 const cardToOpen = document.getElementById(`week-${initialOpenWeek.week}`);
-                 if (cardToOpen) {
-                    cardToOpen.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    const details = cardToOpen.querySelector('.daily-tasks');
-                    if (details) {
-                        openWeekId = cardToOpen.id;
-                        details.style.maxHeight = details.scrollHeight + "px";
-                    }
-                 }
+            if (savedDate) {
+                dateModal.style.display = 'none';
+                mainContent.style.display = 'block';
+                setStartDate(savedDate, true);
+                recalculateAndRerender();
+                const initialOpenWeek = scheduleData.weeks.find(w => w.status !== 'completed') || scheduleData.weeks[0];
+                if (initialOpenWeek) {
+                     const cardToOpen = document.getElementById(`week-${initialOpenWeek.week}`);
+                     if (cardToOpen) {
+                        cardToOpen.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        const details = cardToOpen.querySelector('.daily-tasks');
+                        if (details) { openWeekId = cardToOpen.id; details.style.maxHeight = details.scrollHeight + "px"; }
+                     }
+                }
+            } else {
+                 dateModal.style.display = 'flex';
+                 mainContent.style.display = 'none';
             }
-        });
 
+            document.getElementById('save-start-date').addEventListener('click', () => {
+                const dateInput = document.getElementById('start-date-input');
+                if (dateInput.value) {
+                    dateModal.style.display = 'none';
+                    mainContent.style.display = 'block';
+                    setStartDate(dateInput.value, true);
+                    recalculateAndRerender();
+                }
+            });
+
+            document.getElementById('settings-btn').addEventListener('click', () => {
+                const dateInput = document.getElementById('start-date-input');
+                dateInput.value = programStartDate.toISOString().split('T')[0];
+                
+                showCustomConfirm().then(confirmed => {
+                    if (confirmed) {
+                        dateModal.style.display = 'flex';
+                        mainContent.style.display = 'none';
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
+
+
+
+
 
 
